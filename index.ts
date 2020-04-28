@@ -5,7 +5,6 @@ import { Mesh } from '@babylonjs/core/Meshes'
 import { Vector3, StandardMaterial, Color3, DynamicTexture } from '@babylonjs/core'
 import { createScene } from './createScene';
 
-
 var canvas: any = document.getElementById("renderCanvas");
 var engine: Engine = new Engine(canvas, true);
 

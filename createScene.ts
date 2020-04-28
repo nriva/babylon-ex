@@ -1,4 +1,4 @@
-import { Scene, Vector3, Engine, ArcRotateCamera, HemisphericLight, MeshBuilder, Mesh, Layer, StandardMaterial, Texture, Color3, PointLight, Axis, Space, UniversalCamera } from "@babylonjs/core";
+import { Scene, Vector3, Engine, ArcRotateCamera, HemisphericLight, MeshBuilder, Mesh, Layer, StandardMaterial, Texture, Color3, PointLight, Axis, Space, UniversalCamera, FlyCamera } from "@babylonjs/core";
 import { Animation, CircleEase, EasingFunction } from '@babylonjs/core/Animations';
 
 
@@ -17,9 +17,11 @@ export function createScene(engine: Engine, canvas: any) {
     skyboxMaterial.disableLighting = true;
     */
   
+    /*
     var background = new Layer("back", "textures/8k_stars_milky_way.jpg", scene);
     background.isBackground = true;
     background.texture.level = 0;
+    */
     //background.texture.wAng = .2;
     //showWorldAxis(100);
 
@@ -91,8 +93,22 @@ export function createScene(engine: Engine, canvas: any) {
     //var camera = new ArcRotateCamera("Camera", 0,0, 10,  new Vector3(0,0,0), scene);
     //camera.setPosition(new Vector3(100,50,-100));
   
-    var camera = new UniversalCamera("Camera", new Vector3(5,25,-100), scene);   // new Vector3(100,25,-100)
+    //var camera = new UniversalCamera("Camera", new Vector3(100,25,-100), scene);   // new Vector3(100,25,-100)
     //var camera = new FollowCamera("Camera", new Vector3(100,50,-100), scene, sun);
+
+    // Parameters: name, position, scene
+    var camera = new FlyCamera("FlyCamera", new Vector3(100,25,-100), scene);
+
+    // Airplane like rotation, with faster roll correction and banked-turns.
+    // Default is 100. A higher number means slower correction.
+    camera.rollCorrect = 10;
+    // Default is false.
+    camera.bankedTurn = true;
+    // Defaults to 90° in radians in how far banking will roll the camera.
+    camera.bankedTurnLimit = Math.PI / 2;
+    // How much of the Yawing (turning) will affect the Rolling (banked-turn.)
+    // Less than 1 will reduce the Rolling, and more than 1 will increase it.
+    camera.bankedTurnMultiplier = 1;
   
     camera.setTarget(new Vector3(0, 0, 0))
     camera.attachControl(canvas, true);
@@ -123,7 +139,7 @@ export function createScene(engine: Engine, canvas: any) {
     camera.animations.push(animation2);  
   
   
-    scene.beginAnimation(camera, 0, 120, true, 0.1);
+    //scene.beginAnimation(camera, 0, 120, true, 0.1);
     return scene;
   }
 
