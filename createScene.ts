@@ -17,11 +17,11 @@ export function createScene(engine: Engine, canvas: any) {
     skyboxMaterial.disableLighting = true;
     */
   
-    /*
+    
     var background = new Layer("back", "textures/8k_stars_milky_way.jpg", scene);
     background.isBackground = true;
     background.texture.level = 0;
-    */
+  
     //background.texture.wAng = .2;
     //showWorldAxis(100);
 
@@ -31,7 +31,7 @@ export function createScene(engine: Engine, canvas: any) {
     var material = new StandardMaterial("sunmaterial", scene);
     material.diffuseTexture = new Texture("textures/8k_sun.jpg", scene, true, false) ;
     sun.material = material;
-    material.emissiveColor = new Color3(1, 1, 0);
+    material.emissiveColor = new Color3(1, 1, 1);
   
     //var particleSystem = new ParticleSystem("particles", 200, scene);
     //particleSystem.emitter = sun;
@@ -90,25 +90,24 @@ export function createScene(engine: Engine, canvas: any) {
     var animation2 = new Animation("animation2", "position.z", 60, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CONSTANT);
   
     // Setup camera
-    //var camera = new ArcRotateCamera("Camera", 0,0, 10,  new Vector3(0,0,0), scene);
-    //camera.setPosition(new Vector3(100,50,-100));
+    var camera = new ArcRotateCamera("Camera", 0,0, 10,  new Vector3(0,0,0), scene);
+    camera.setPosition(new Vector3(100,50,-100));
   
     //var camera = new UniversalCamera("Camera", new Vector3(100,25,-100), scene);   // new Vector3(100,25,-100)
     //var camera = new FollowCamera("Camera", new Vector3(100,50,-100), scene, sun);
 
     // Parameters: name, position, scene
-    var camera = new FlyCamera("FlyCamera", new Vector3(100,25,-100), scene);
-
+    //var camera = new FlyCamera("FlyCamera", new Vector3(100,25,-100), scene);
     // Airplane like rotation, with faster roll correction and banked-turns.
     // Default is 100. A higher number means slower correction.
-    camera.rollCorrect = 10;
+    //camera.rollCorrect = 10;
     // Default is false.
-    camera.bankedTurn = true;
+    //camera.bankedTurn = true;
     // Defaults to 90° in radians in how far banking will roll the camera.
-    camera.bankedTurnLimit = Math.PI / 2;
+    //camera.bankedTurnLimit = Math.PI / 2;
     // How much of the Yawing (turning) will affect the Rolling (banked-turn.)
     // Less than 1 will reduce the Rolling, and more than 1 will increase it.
-    camera.bankedTurnMultiplier = 1;
+    //camera.bankedTurnMultiplier = 1;
   
     camera.setTarget(new Vector3(0, 0, 0))
     camera.attachControl(canvas, true);
