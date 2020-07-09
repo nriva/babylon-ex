@@ -1,10 +1,12 @@
-import { Mesh, Vector3 } from "@babylonjs/core";
+import { Mesh, Vector3, StepBlock } from "@babylonjs/core";
 
+export class World
+{
+  public static readonly ELAST_COEFF = 0.75;
+}
 
 export class SphericBody
 {
-  private ELAST_COEFF = 0.75;
-  
 
   public grphAcc : Mesh;
   public grphSpeed : Mesh;
@@ -130,25 +132,32 @@ export class SphericBody
   move()
   {
 
+    console.log(`spd/1 ${this.grphBody.name} ${this.speed}`);
     this.sumVector(this.acc,this.speed,this.speed);
+    console.log(`spd/2 ${this.grphBody.name} ${this.speed}`);
+
 
     // Rimbalzo
-    if(this.x() + this.speed.x > this.worldDimensions.x - this.radius || this.x() + this.speed.x < this.radius) {
-        this.speed.x = - this.ELAST_COEFF * this.speed.x;
+    if(Math.abs(this.x() + this.speed.x) > this.worldDimensions.x - this.radius) {
+        this.speed.x = - World.ELAST_COEFF * this.speed.x;
     }
 
-    if(this.y() + this.speed.y > this.worldDimensions.y - this.radius || this.y() + this.speed.y < this.radius) {
-        this.speed.y = - this.ELAST_COEFF * this.speed.y;
+    if( Math.abs(this.y() + this.speed.y) > this.worldDimensions.y - this.radius ) {
+        this.speed.y = - World.ELAST_COEFF * this.speed.y;
     }
 
-    if(this.z() + this.speed.z > this.worldDimensions.z - this.radius || this.z() + this.speed.z < this.radius) {
-      this.speed.z = - this.ELAST_COEFF * this.speed.z;
+    if( Math.abs(this.z() + this.speed.z) > this.worldDimensions.z - this.radius) {
+      this.speed.z = - World.ELAST_COEFF * this.speed.z;
     }
 
     // Spostamento
     var pos = new Vector3(this.x() + this.speed.x, this.y() + this.speed.y, this.z() + this.speed.z);
-    this.setVector(pos,this.grphBody.position)
+    this.setVector(pos,this.grphBody.position);
+    console.log(`pos ${this.grphBody.name} ${this.grphBody.position}`);
+    
     this.setVectors();
+
+    
   }
 
   prepareForInteract()
@@ -173,7 +182,6 @@ export class SphericBody
 
 export function collisionManagement(objects: SphericBody[], onCollision:any)
 {
-  debugger;
   for(var i=0;i<objects.length;i++)
     for(var j=0;j<objects.length;j++)
       if(i!=j && i>=j) {
@@ -207,11 +215,12 @@ export function interaction(bodies: SphericBody[])
     for(var i2=0;i2<bodies.length;i2++)
       if(i1>i2) {
         interact(bodies[i1], bodies[i2]);
+          
       }
   }
 }
 
-const G = 0.05;
+const G = 0.5;
 
 var logged = false;
 
@@ -221,37 +230,86 @@ function interact(o1:SphericBody,o2:SphericBody)
   var y = o1.y()-o2.y();
   var z = o1.z()-o2.z();
 
-  // Angolo del vettore f
-  //var alpha = Math.atan(Math.abs(y/x));
-
   var r = x*x + y*y + z*z;
   var module = Math.sqrt(r);
+
   
   var f = G / r ;
 
-  // componenti di f lungo gli assi
-  var fxi = f * x / module;
-  var fyi = f * y / module;
-  var fzi = f * z / module;
+  // componenti assolute di f lungo gli assi
+  var fxi = f * (x / module);
+  var fzi = f * (z / module);
 
-  var fx=fxi,fy=fyi,fz=fzi;
-
-  if(x>0) fx = - fxi;
-  if(y>0) fy = - fyi;
-  if(z>0) fz = - fzi;
-
-  o1.acc.x += fx * o2.getMass();
-  o1.acc.y += fy * o2.getMass();
-  o1.acc.z += fz * o2.getMass();
-
-  if(x<0) fx = fxi; else fx = -fxi;
-  if(y<0) fy = fyi; else fy = -fyi;
-  if(z<0) fz = fzi; else fz = -fzi;
+  var fyi = f * (y / module);
 
 
-  o2.acc.x += fx * o1.getMass();
-  o2.acc.y += fy * o1.getMass();
-  o2.acc.z += fz * o1.getMass();
+  var fx1=fxi,fy1=fyi,fz1=fzi;
+  var fx2=fxi,fy2=fyi,fz2=fzi;
+
+  // se o1 è più lontano dall'origine di o2, la forza diventa negativa
+  if(x>0) fx1 = - fxi; else fx2 = - fxi;
+  if(y>0) fy1 = - fyi; else fy2 = - fyi;
+  if(z>0) fz1 = - fzi; else fz2 = - fyi;
+
+  o1.acc.x += fx1 * o2.getMass();
+  o1.acc.y += fy1 * o2.getMass();
+  o1.acc.z += fz1 * o2.getMass();
+
+  o2.acc.x += fx2 * o1.getMass();
+  o2.acc.y += fy2 * o1.getMass();
+  o2.acc.z += fz2 * o1.getMass();
+
+  console.log(`acc ${o1.grphBody.name} ${o1.acc}`);
+  console.log(`acc ${o2.grphBody.name} ${o2.acc}`);
   
 
+}
+
+
+export class CircularMover
+{
+  public alpha:number=0;
+  public dalpha:number=0.01;
+  public radius:number=50;
+
+  public body : SphericBody;
+
+  private axis = [true,false,true];
+
+  constructor(axis: boolean[])
+  {
+    this.axis = axis;
+  }
+
+  step() : boolean
+  {
+    var r = [0,0];
+
+    r[0] = this.radius * Math.sin(this.alpha);
+    r[1] = this.radius * Math.cos(this.alpha);
+
+    var i=0;
+    
+    if(this.axis[0]) {
+      this.body.grphBody.position.x = r[i];
+      i++;
+    }
+    if(this.axis[1]) {
+
+      this.body.grphBody.position.y = r[i];
+      i++;
+    }
+    if(this.axis[2]) {
+
+      this.body.grphBody.position.z = r[i];
+      i++;
+    }
+    this.alpha += this.dalpha;
+
+    
+
+    return this.alpha <= Math.PI * 2;
+    
+
+  }
 }
