@@ -1,8 +1,9 @@
-import { Mesh, Vector3, StepBlock } from "@babylonjs/core";
+import { Mesh, Vector3 } from "@babylonjs/core";
 
 export class World
 {
   public static readonly ELAST_COEFF = 0.75;
+  public static readonly  G = 0.1;
 }
 
 export class SphericBody
@@ -12,16 +13,9 @@ export class SphericBody
   public grphSpeed : Mesh;
   public grphBody: Mesh;
 
-  //public inix : number=0;
-  //public iniy : number=0;
   private initPos : Vector3;
-
-  //public _ax : number=0;
-  //public _ay : number=0;
-  private initAcc : Vector3;
-  //public _dx : number=0;
-  //public _dy : number=0;
   private initSpeed: Vector3;
+  private initAcc: Vector3;
 
 
   //public ax : number=0;
@@ -46,7 +40,7 @@ export class SphericBody
     this.grphSpeed = grphSpeed;
 
     this.initPos = new Vector3(grphBody.position.x,grphBody.position.y,grphBody.position.z);
-    this.initAcc = new Vector3(acc.x,acc.y,acc.z);
+    this.initAcc = new Vector3(acc.x, acc.y, acc.z);
     this.initSpeed = new Vector3(speed.x,speed.y,speed.z);
     this.setVector(this.initSpeed, this.speed);
 
@@ -162,7 +156,13 @@ export class SphericBody
 
   prepareForInteract()
   {
-    this.zeroVector(this.acc);
+    if(this.initAcc!=null)
+    {
+      this.setVector(this.initAcc, this.acc);
+      this.initAcc = null;
+    }
+    else
+      this.zeroVector(this.acc);
   }
 
   setVectors()
@@ -220,7 +220,7 @@ export function interaction(bodies: SphericBody[])
   }
 }
 
-const G = 0.5;
+
 
 var logged = false;
 
@@ -234,13 +234,13 @@ function interact(o1:SphericBody,o2:SphericBody)
   var module = Math.sqrt(r);
 
   
-  var f = G / r ;
+  var f = World.G / r ;
 
   // componenti assolute di f lungo gli assi
-  var fxi = f * (x / module);
-  var fzi = f * (z / module);
-
-  var fyi = f * (y / module);
+  var fxi = f * Math.abs(x / module);
+  var fyi = f * Math.abs(y / module);
+  var fzi = f * Math.abs(z / module);
+ 
 
 
   var fx1=fxi,fy1=fyi,fz1=fzi;

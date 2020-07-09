@@ -2,7 +2,7 @@ import { Engine } from '@babylonjs/core/Engines/engine'
 import { Scene } from '@babylonjs/core/scene'
 import "@babylonjs/core/Helpers/sceneHelpers"
 import { Mesh } from '@babylonjs/core/Meshes'
-import { Vector3, StandardMaterial, Color3, DynamicTexture, Texture, PointLight, UniversalCamera, ArcRotateCamera } from '@babylonjs/core'
+import { Vector3, StandardMaterial, Color3, DynamicTexture, Texture, PointLight, UniversalCamera, ArcRotateCamera, ParticleSystem } from '@babylonjs/core'
 import { SphericBody, interaction, collisionManagement, CircularMover } from './physlib'
 //import { createScene } from './createScene';
 
@@ -26,7 +26,7 @@ function createScene(engine: Engine, canvas:any): Scene
   showWorldAxis(200);
 
     // sun sphere
-    var sun =Mesh.CreateSphere("sun", 16, 40, scene);
+    var sun =Mesh.CreateSphere("sun", 16, 20, scene);
     sun.position = new Vector3(0, 0, 0);
     var material = new StandardMaterial("sunmaterial", scene);
     material.diffuseTexture = new Texture("textures/8k_sun.jpg", scene, true, false) ;
@@ -47,7 +47,7 @@ function createScene(engine: Engine, canvas:any): Scene
     
   
     // planet
-    var planet = Mesh.CreateSphere("planet", 16, 5, scene);
+    var planet = Mesh.CreateSphere("planet", 16, 14, scene);
     planet.position = new Vector3(0,0,150);
     //planet.scaling.x=-1;
     //planet.scaling.y=-1;
@@ -60,7 +60,7 @@ function createScene(engine: Engine, canvas:any): Scene
 
 
     
-    var planet2 = Mesh.CreateSphere("planet2", 16, 5, scene);
+    var planet2 = Mesh.CreateSphere("planet2", 16, 10, scene);
     planet2.position = new Vector3(150,0,0);
     var planetMaterial2 = new StandardMaterial("planetSurface2", scene);
     planetMaterial2.diffuseTexture = new Texture("textures/2k_moon.jpg", scene, true, false) ;
@@ -74,9 +74,9 @@ function createScene(engine: Engine, canvas:any): Scene
     camera.setPosition( new Vector3(250,250,250));
     camera.attachControl(canvas, true);
 
-    b1 = new SphericBody(new Vector3(0,0,0), new Vector3(0,0,0), 5, 20, sun, null, null, wd);
-    b2 = new SphericBody(new Vector3(0,0,0), new Vector3(-50,0,0), 5, 7, planet, null, null, wd);
-    b3 = new SphericBody(new Vector3(0,0,0), new Vector3(0,0,-50), 5, 5, planet2, null, null, wd);
+    b1 = new SphericBody(new Vector3(0,0,0), new Vector3(0,0,0), 5, 10, sun, null, null, wd);
+    b2 = new SphericBody(new Vector3(0,1,-1), new Vector3(0,0,0), 5, 7, planet, null, null, wd);
+    b3 = new SphericBody(new Vector3(0,0,0), new Vector3(0,0,0), 5, 5, planet2, null, null, wd);
   
     var bodies=[b1, b2, b3];
 
@@ -105,9 +105,8 @@ function createScene(engine: Engine, canvas:any): Scene
       if(!animating)
         return;
 
-        interaction(bodies);
+      interaction(bodies);
       bodies.forEach((b)=>b.move());
-        
       
       collisionManagement(bodies, function(){ 
         animating=false; console.log("Stop!!!") })
