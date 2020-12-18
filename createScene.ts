@@ -18,7 +18,7 @@ export function createScene(engine: Engine, canvas: any) {
     */
   
     
-    var background = new Layer("back", "textures/8k_stars_milky_way.jpg", scene);
+    var background = new Layer("back", "textures/back.jpg", scene);
     background.isBackground = true;
     background.texture.level = 0;
   
