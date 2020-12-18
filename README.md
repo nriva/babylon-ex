@@ -1,6 +1,14 @@
 # babylon-ex
 
-Testing the Babylonjs framework
+Testing the [Babylonjs](https://www.babylonjs.com/) framework.
+
+## Install
+
+    npm i
+
+## Build
+
+    npx webpack
 
 ## Esecuzione
 
