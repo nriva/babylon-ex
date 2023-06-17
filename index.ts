@@ -3,7 +3,8 @@ import { Scene } from '@babylonjs/core/scene'
 import "@babylonjs/core/Helpers/sceneHelpers"
 import { Mesh, MeshBuilder } from '@babylonjs/core/Meshes'
 import { Vector3, StandardMaterial, Color3, DynamicTexture } from '@babylonjs/core'
-import { createScene } from './createScene';
+//import { createScene } from './exampleScene'
+import { createScene } from './solarSystemScene';
 
 var canvas: any = document.getElementById("renderCanvas");
 var engine: Engine = new Engine(canvas, true);
