@@ -1,5 +1,5 @@
-import { Scene, Vector3, Engine, ArcRotateCamera, HemisphericLight, MeshBuilder, Mesh, Layer, StandardMaterial, Texture, Color3, PointLight, Axis, Space, UniversalCamera, FlyCamera } from "@babylonjs/core";
-import { Animation, CircleEase, EasingFunction } from '@babylonjs/core/Animations';
+import { Scene, Vector3, Engine, ArcRotateCamera, MeshBuilder, Mesh, Layer, StandardMaterial, Texture, Color3, PointLight, Axis, Space } from "@babylonjs/core";
+import { Animation } from '@babylonjs/core/Animations';
 
 
 export function createScene(engine: Engine, canvas: any) {
